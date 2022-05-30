@@ -1,0 +1,21 @@
+trigger:
+- main
+- releases/*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Main
+  jobs:
+  - job: InstallDeps
+    steps:
+    - script: sudo apt update && sudo apt install -y yamllint curl
+  - job: CheckSyntax
+    steps:
+    - script: yamllint $(find $PWD -regex '.*\.yml')
+  - job: Alert
+    dependsOn: CheckSyntax
+    condition: failed()
+    steps:
+    - script: curl -X POST -H 'Content-type: application/json' --data '{"text":"YAML Lint failed"}' $(SLACK_WEBHOOK_URL)
