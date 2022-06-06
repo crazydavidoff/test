@@ -8,14 +8,14 @@ pool:
 stages:
 - stage: Main
   jobs:
-  - job: InstallDeps
+  - job: YamlCheck
     steps:
     - script: sudo apt update && sudo apt install -y yamllint curl
-  - job: CheckSyntax
-    steps:
+      name: InstallDeps
+
     - script: yamllint $(find $PWD -regex '.*\.yml')
-  - job: Alert
-    dependsOn: CheckSyntax
-    condition: failed()
-    steps:
+      name: CheckSyntax
+
     - script: curl -X POST -H 'Content-type: application/json' --data '{"text":"YAML Lint failed"}' $(SLACK_WEBHOOK_URL)
+      condition: failed()
+      name: AlertOnFailure
