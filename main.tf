@@ -1,11 +1,11 @@
 resource "google_compute_instance" "default" {
   name         = "myvirtmachine"
   machine_type = "f1-micro"
-  zone         = "europe-west1-a"
+  zone         = var.zone
 
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-9"
+      image = "debian-cloud/debian-10"
     }
   }
 
